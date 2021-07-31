@@ -3,11 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:webmaster/data/events.dart';
 
 class WriteAccess extends StatelessWidget {
+  final Function callback;
+  WriteAccess({required this.callback});
   @override
   Widget build(BuildContext context) {
     final events = Provider.of<EventModel>(context);
     return GestureDetector(
-      onTap: () => events.toggleWrite(),
+      onTap: () => callback(),
       child: Container(
           decoration: BoxDecoration(
             border: Border.all(
@@ -15,19 +17,9 @@ class WriteAccess extends StatelessWidget {
             borderRadius: BorderRadius.circular(30),
           ),
           margin: EdgeInsets.all(10),
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
-          child: Row(
-            children: [
-              Icon(events.writeAccess ? Icons.lock_open : Icons.lock,
-                  color: events.writeAccess ? Colors.green : Colors.red),
-              SizedBox(width: 5),
-              Text(
-                "Write",
-                style: TextStyle(
-                    color: events.writeAccess ? Colors.green : Colors.red),
-              )
-            ],
-          )),
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          child: Icon(events.writeAccess ? Icons.lock_open : Icons.lock,
+              color: events.writeAccess ? Colors.green : Colors.red)),
     );
   }
 }

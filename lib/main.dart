@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:webmaster/data/events.dart';
 import 'package:webmaster/views/home.dart';
@@ -10,11 +11,22 @@ void main() {
 class WebMasterApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(),
-      home: ChangeNotifierProvider(
-          create: (context) => EventModel(), child: HomeView()),
+    return ChangeNotifierProvider(
+      create: (context) => EventModel(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.dark().copyWith(
+              primary: Colors.orange,
+              secondary: Colors.orange,
+            ),
+            appBarTheme: AppBarTheme(
+                systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarBrightness: Brightness.dark,
+              statusBarColor: Colors.transparent,
+            ))),
+        home: HomeView(),
+      ),
     );
   }
 }
