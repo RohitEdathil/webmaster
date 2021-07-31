@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "424263450757",
+    "project_id": "events-cdn-asme",
+    "storage_bucket": "events-cdn-asme.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:424263450757:android:fae889032a9299ef39a9ec",
+        "android_client_info": {
+          "package_name": "com.asme.webmaster"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "424263450757-m57kd1pq6pkji4n7hfqgpj3v8cetmk1t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgxvuPoFkPjxVUSc6Gcbly6ol-r7Vc1hE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "424263450757-m57kd1pq6pkji4n7hfqgpj3v8cetmk1t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
