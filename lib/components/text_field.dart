@@ -2,17 +2,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomField extends StatelessWidget {
-  final label;
-  final large;
-  final validator;
+  final String label;
+  final bool large;
+  final String? Function(String?) validator;
+  final String? current;
   CustomField(
-      {required this.label, this.large = false, required this.validator});
+      {required this.label,
+      this.large = false,
+      required this.validator,
+      this.current});
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
       child: TextFormField(
         validator: validator,
+        controller: TextEditingController(text: current),
         minLines: large ? 20 : 1,
         maxLines: large ? 200 : 1,
         decoration: InputDecoration(

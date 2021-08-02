@@ -25,6 +25,25 @@ class EventModel extends ChangeNotifier {
     }
   }
 
+  Future<String?> createEvent(
+    String name,
+    String writeUp,
+    String link,
+    String path,
+    String date,
+    int status,
+  ) async {
+    print({
+      name,
+      writeUp,
+      link,
+      path,
+      date,
+      status,
+    });
+    return await Future.delayed(Duration(seconds: 3), () => 'Failed to Create');
+  }
+
   Future<bool> login(String email, String password) async {
     try {
       final credential = await FirebaseAuth.instance
