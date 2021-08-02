@@ -20,6 +20,7 @@ class WebMasterApp extends StatelessWidget {
               primary: Colors.orange,
               secondary: Colors.orange,
             ),
+            accentColor: Colors.orange,
             appBarTheme: AppBarTheme(
                 systemOverlayStyle: SystemUiOverlayStyle(
               statusBarBrightness: Brightness.dark,

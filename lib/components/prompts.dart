@@ -56,6 +56,7 @@ class _UnlockPromptState extends State<UnlockPrompt> {
           TextField(
             decoration: InputDecoration(labelText: 'Email ID'),
             controller: emailController,
+            autofocus: true,
           ),
           SizedBox(height: 20),
           TextField(
