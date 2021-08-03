@@ -23,3 +23,25 @@ class WriteAccess extends StatelessWidget {
     );
   }
 }
+
+class ServerStatus extends StatelessWidget {
+  final Function callback;
+  ServerStatus({required this.callback});
+  @override
+  Widget build(BuildContext context) {
+    final events = Provider.of<EventModel>(context);
+    return GestureDetector(
+      onTap: () => callback(),
+      child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+                color: events.serverStatus ? Colors.green : Colors.yellow),
+            borderRadius: BorderRadius.circular(30),
+          ),
+          margin: EdgeInsets.all(10),
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          child: Icon(events.serverStatus ? Icons.wifi : Icons.warning,
+              color: events.serverStatus ? Colors.green : Colors.yellow)),
+    );
+  }
+}

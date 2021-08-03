@@ -104,3 +104,33 @@ class LockPrompt extends StatelessWidget {
     );
   }
 }
+
+class ServerToggle extends StatelessWidget {
+  final bool setTo;
+  const ServerToggle({required this.setTo});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Maintenance Mode'),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      backgroundColor: Theme.of(context).primaryColor,
+      content: Text(
+          'Do you really want to turn ${!setTo ? "on" : "off"} maintenance mode?'),
+      actions: [
+        TextButton(
+          child: Text('Cancel'),
+          onPressed: Navigator.of(context).pop,
+        ),
+        TextButton(
+          child: Text('Confirm'),
+          onPressed: () {
+            Provider.of<EventModel>(context, listen: false)
+                .toggleServerStatus();
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
+}

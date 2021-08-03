@@ -1,11 +1,40 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart';
 
 class EventModel extends ChangeNotifier {
+  final eventsPerThumb = 20;
   bool ready = false;
   var writeAccess = false;
   User? user;
+  bool serverStatus = false;
+  int eventsCount = 0;
+  FirebaseFirestore? db;
+  FirebaseStorage? storage;
+  EventModel() {
+    Firebase.initializeApp().then((value) {
+      user = FirebaseAuth.instance.currentUser;
+      storage = FirebaseStorage.instance;
+      db = FirebaseFirestore.instance;
+      if (user != null) {
+        writeAccess = true;
+      }
+      db?.collection('state').doc('0').snapshots().listen(stateChangeHandler);
+      ready = true;
+      notifyListeners();
+    });
+  }
+
+  void stateChangeHandler(DocumentSnapshot<Map<String, dynamic>> state) {
+    serverStatus = state['server_status'];
+    eventsCount = state['events_count'];
+    notifyListeners();
+  }
 
   String get email {
     return user?.email ?? 'No active user';
@@ -14,6 +43,10 @@ class EventModel extends ChangeNotifier {
   void toggleWrite() {
     writeAccess = !writeAccess;
     notifyListeners();
+  }
+
+  void toggleServerStatus() {
+    db?.collection('state').doc('0').update({'server_status': !serverStatus});
   }
 
   void logout() {
@@ -33,15 +66,52 @@ class EventModel extends ChangeNotifier {
     String date,
     int status,
   ) async {
-    print({
-      name,
-      writeUp,
-      link,
-      path,
-      date,
-      status,
-    });
-    return await Future.delayed(Duration(seconds: 3), () => 'Failed to Create');
+    final newName = '$eventsCount-poster${extension(path)}';
+    await storage?.ref("posters/$newName").putFile(File(path));
+    try {
+      await db!.runTransaction((transaction) async {
+        // Reads
+        final serverStatus =
+            await transaction.get(db!.collection('state').doc('0'));
+        int nextId = serverStatus['events_count'];
+        final curThumbnail = await transaction.get(
+            db!.collection('thumbnails').doc('${nextId ~/ eventsPerThumb}'));
+
+        // Writes
+        transaction.update(
+            db!.collection('state').doc('0'), {'events_count': nextId + 1});
+        transaction.set(db!.collection('events').doc('$nextId'), {
+          'name': name,
+          'write_up': writeUp,
+          'link': link,
+          'poster': newName,
+          'date': date,
+          'status': status
+        });
+
+        curThumbnail.exists
+            ? transaction.update(
+                db!.collection('thumbnails').doc('${nextId ~/ eventsPerThumb}'),
+                {
+                    '$nextId': {
+                      'name': name,
+                      'thumb': newName,
+                      'status': status
+                    }
+                  })
+            : transaction.set(
+                db!.collection('thumbnails').doc('${nextId ~/ eventsPerThumb}'),
+                {
+                    '$nextId': {
+                      'name': name,
+                      'thumb': newName,
+                      'status': status
+                    }
+                  });
+      });
+    } on FirebaseException catch (e) {
+      return e.message;
+    }
   }
 
   Future<bool> login(String email, String password) async {
@@ -56,15 +126,5 @@ class EventModel extends ChangeNotifier {
       print(e.code);
       return false;
     }
-  }
-
-  EventModel() {
-    Firebase.initializeApp().then((value) {
-      user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        writeAccess = true;
-      }
-      ready = true;
-    });
   }
 }
