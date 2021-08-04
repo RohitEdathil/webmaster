@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:webmaster/components/event_card.dart';
 import 'package:webmaster/components/prompts.dart';
 import 'package:webmaster/components/status_displays.dart';
 import 'package:webmaster/data/events.dart';
@@ -33,31 +34,43 @@ class HomeView extends StatelessWidget {
         ? Center(child: CircularProgressIndicator())
         : Scaffold(
             backgroundColor: Theme.of(context).primaryColor,
-            appBar: AppBar(
-              elevation: 0,
-              actions: [
-                events.writeAccess
-                    ? ServerStatus(
-                        callback: () => events.serverStatus
-                            ? serverOffPrompt(context)
-                            : serverOnPrompt(context),
-                      )
-                    : Container(),
-                WriteAccess(
-                  callback: () => events.writeAccess
-                      ? lockPrompt(context)
-                      : unlockPrompt(context),
-                ),
-              ],
-            ),
             floatingActionButton: events.writeAccess
                 ? FloatingActionButton(
                     child: Icon(Icons.add),
                     onPressed: () => gotoCreate(context),
                   )
                 : null,
-            body: Center(
-              child: Text('Hello'),
+            body: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  // elevation: 0,
+                  flexibleSpace: Padding(
+                    padding: const EdgeInsets.only(top: 25),
+                    child: Image.asset('assets/logo.jpg'),
+                  ),
+                  expandedHeight: 300,
+
+                  actions: [
+                    events.writeAccess
+                        ? ServerStatus(
+                            callback: () => events.serverStatus
+                                ? serverOffPrompt(context)
+                                : serverOnPrompt(context),
+                          )
+                        : Container(),
+                    WriteAccess(
+                      callback: () => events.writeAccess
+                          ? lockPrompt(context)
+                          : unlockPrompt(context),
+                    ),
+                  ],
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                      (context, index) => EventCard(index: index),
+                      childCount: events.eventsCount),
+                )
+              ],
             ),
           );
   }
