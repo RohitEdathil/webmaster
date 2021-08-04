@@ -44,3 +44,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Google Services file, contains confidential info, obtained when configuring firestore
+android/app/google-services.json 
