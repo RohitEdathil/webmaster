@@ -6,9 +6,15 @@ import 'package:webmaster/components/status_displays.dart';
 import 'package:webmaster/data/events.dart';
 import 'package:webmaster/views/create.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
+  @override
+  _HomeViewState createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
   void gotoCreate(BuildContext context) => Navigator.of(context)
       .push(MaterialPageRoute(builder: (context) => WriteView()));
+
   void unlockPrompt(BuildContext context) {
     showDialog(context: context, builder: (context) => UnlockPrompt());
   }
@@ -32,45 +38,53 @@ class HomeView extends StatelessWidget {
     final events = Provider.of<EventModel>(context);
     return !events.ready
         ? Center(child: CircularProgressIndicator())
-        : Scaffold(
-            backgroundColor: Theme.of(context).primaryColor,
-            floatingActionButton: events.writeAccess
-                ? FloatingActionButton(
-                    child: Icon(Icons.add),
-                    onPressed: () => gotoCreate(context),
-                  )
-                : null,
-            body: CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                  // elevation: 0,
-                  flexibleSpace: Padding(
-                    padding: const EdgeInsets.only(top: 25),
-                    child: Image.asset('assets/logo.jpg'),
-                  ),
-                  expandedHeight: 300,
-
-                  actions: [
-                    events.writeAccess
-                        ? ServerStatus(
-                            callback: () => events.serverStatus
-                                ? serverOffPrompt(context)
-                                : serverOnPrompt(context),
-                          )
-                        : Container(),
-                    WriteAccess(
-                      callback: () => events.writeAccess
-                          ? lockPrompt(context)
-                          : unlockPrompt(context),
+        : RefreshIndicator(
+            onRefresh: () async => setState(() {}),
+            child: Scaffold(
+              backgroundColor: Theme.of(context).primaryColor,
+              floatingActionButton: events.writeAccess
+                  ? FloatingActionButton(
+                      child: Icon(Icons.add),
+                      onPressed: () => gotoCreate(context),
+                    )
+                  : null,
+              body: CustomScrollView(
+                physics: BouncingScrollPhysics(),
+                slivers: [
+                  SliverAppBar(
+                    // elevation: 0,
+                    flexibleSpace: Padding(
+                      padding: const EdgeInsets.only(top: 25),
+                      child: Image.asset('assets/logo.jpg'),
                     ),
-                  ],
-                ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                      (context, index) => EventCard(index: index),
-                      childCount: events.eventsCount),
-                )
-              ],
+                    expandedHeight: 300,
+
+                    actions: [
+                      events.writeAccess
+                          ? ServerStatus(
+                              callback: () => events.serverStatus
+                                  ? serverOffPrompt(context)
+                                  : serverOnPrompt(context),
+                            )
+                          : Container(),
+                      WriteAccess(
+                        callback: () => events.writeAccess
+                            ? lockPrompt(context)
+                            : unlockPrompt(context),
+                      ),
+                    ],
+                  ),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                        (context, index) => EventCard(index: index),
+                        childCount: events.eventsCount),
+                  ),
+                  SliverToBoxAdapter(
+                      child: SizedBox(
+                    height: 50,
+                  ))
+                ],
+              ),
             ),
           );
   }

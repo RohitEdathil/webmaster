@@ -1,52 +1,87 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:webmaster/data/events.dart';
 
 class EventCard extends StatelessWidget {
   final int index;
   const EventCard({required this.index});
 
+  Chip stateChip(BuildContext context, int state) {
+    switch (state) {
+      case 0:
+        return Chip(
+          label: Text('Open'),
+          backgroundColor: Colors.green,
+        );
+      case 1:
+        return Chip(
+          label: Text('Closed'),
+          backgroundColor: Colors.blue,
+        );
+      default:
+        return Chip(
+          label: Text('Ended'),
+          backgroundColor: Colors.red,
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FractionallySizedBox(
-      widthFactor: MediaQuery.of(context).orientation == Orientation.portrait
-          ? 0.9
-          : 0.6,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
-          child: Container(
-            color: Theme.of(context).primaryColorDark.withOpacity(0.3),
-            child: ListTile(
-              contentPadding: EdgeInsets.all(0),
-              minVerticalPadding: 0,
-              title: Image.network(
-                  "https://images.unsplash.com/photo-1549880433-e556bbd93270?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1050&q=80"),
-              subtitle: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Chip(
-                      label: Text('Closed'),
-                    ),
-                    SizedBox(width: 20),
-                    Expanded(
-                      child: Text(
-                        'Introduction to Photoshop',
-                        textAlign: TextAlign.right,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                    )
-                  ],
+    final content =
+        Provider.of<EventModel>(context, listen: false).getThumb(index);
+    return FutureBuilder<Map<String, dynamic>?>(
+      future: content,
+      builder: (context, snapshot) => !snapshot.hasData
+          ? Container()
+          : FractionallySizedBox(
+              widthFactor:
+                  MediaQuery.of(context).orientation == Orientation.portrait
+                      ? 0.9
+                      : 0.6,
+              child: TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 1, end: 0),
+                duration: Duration(milliseconds: 500),
+                builder: (context, i, child) => Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10 + 50 * i),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Container(
+                        color:
+                            Theme.of(context).primaryColorDark.withOpacity(0.3),
+                        child: ListTile(
+                          contentPadding: EdgeInsets.all(0),
+                          minVerticalPadding: 0,
+                          title: Image.network(snapshot.data!['thumb']),
+                          subtitle: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                stateChip(context, snapshot.data!['status']),
+                                SizedBox(width: 20),
+                                Expanded(
+                                  child: Text(
+                                    snapshot.data!['name'],
+                                    textAlign: TextAlign.right,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style:
+                                        Theme.of(context).textTheme.headline6,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          isThreeLine: true,
+                        )),
+                  ),
                 ),
               ),
-              isThreeLine: true,
             ),
-          ),
-        ),
-      ),
     );
   }
 }

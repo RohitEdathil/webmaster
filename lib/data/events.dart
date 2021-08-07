@@ -58,6 +58,23 @@ class EventModel extends ChangeNotifier {
     }
   }
 
+  Future<String>? getPosterUrl(String name) {
+    return storage?.ref('posters/$name').getDownloadURL();
+  }
+
+  Future<Map<String, dynamic>?> getThumb(int index) async {
+    int id = eventsCount - index - 1;
+    int thumbIdx = id ~/ eventsPerThumb;
+    final thumbGroup =
+        await db?.collection('thumbnails').doc('$thumbIdx').get();
+    Map<String, dynamic>? data = thumbGroup!.data();
+    if (data!.containsKey(id.toString())) {
+      final thumbData = data[id.toString()];
+      thumbData['thumb'] = await getPosterUrl(thumbData['thumb']);
+      return thumbData;
+    }
+  }
+
   Future<String?> createEvent(
     String name,
     String writeUp,
