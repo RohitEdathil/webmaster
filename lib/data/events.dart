@@ -11,6 +11,8 @@ class EventModel extends ChangeNotifier {
   final eventsPerThumb = 20;
   bool ready = false;
   var writeAccess = false;
+  Map events = {};
+  int maxthumbIndex = 0;
   User? user;
   bool serverStatus = false;
   int eventsCount = 0;
@@ -65,14 +67,26 @@ class EventModel extends ChangeNotifier {
   Future<Map<String, dynamic>?> getThumb(int index) async {
     int id = eventsCount - index - 1;
     int thumbIdx = id ~/ eventsPerThumb;
-    final thumbGroup =
-        await db?.collection('thumbnails').doc('$thumbIdx').get();
-    Map<String, dynamic>? data = thumbGroup!.data();
-    if (data!.containsKey(id.toString())) {
-      final thumbData = data[id.toString()];
-      thumbData['thumb'] = await getPosterUrl(thumbData['thumb']);
-      return thumbData;
+
+    while (thumbIdx >= maxthumbIndex) {
+      final response = await db
+          ?.collection('thumbnails')
+          .doc(maxthumbIndex.toString())
+          .get();
+      events.addAll(response!.data() ?? {});
+      maxthumbIndex++;
     }
+    final eventData = events[id.toString()];
+    if (eventData != null && eventData['thumb'].substring(0, 4) != 'http') {
+      eventData['thumb'] =
+          await storage!.ref('posters/${eventData["thumb"]}').getDownloadURL();
+    }
+    return eventData;
+  }
+
+  void refresh() {
+    events.clear();
+    maxthumbIndex = 0;
   }
 
   Future<String?> createEvent(

@@ -39,46 +39,38 @@ class EventCard extends StatelessWidget {
                   MediaQuery.of(context).orientation == Orientation.portrait
                       ? 0.9
                       : 0.6,
-              child: TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 1, end: 0),
-                duration: Duration(milliseconds: 500),
-                builder: (context, i, child) => Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10 + 50 * i),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Container(
-                        color:
-                            Theme.of(context).primaryColorDark.withOpacity(0.3),
-                        child: ListTile(
-                          contentPadding: EdgeInsets.all(0),
-                          minVerticalPadding: 0,
-                          title: Image.network(snapshot.data!['thumb']),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                stateChip(context, snapshot.data!['status']),
-                                SizedBox(width: 20),
-                                Expanded(
-                                  child: Text(
-                                    snapshot.data!['name'],
-                                    textAlign: TextAlign.right,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                    style:
-                                        Theme.of(context).textTheme.headline6,
-                                  ),
-                                )
-                              ],
-                            ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Container(
+                      color:
+                          Theme.of(context).primaryColorDark.withOpacity(0.3),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.all(0),
+                        minVerticalPadding: 0,
+                        title: Image.network(snapshot.data!['thumb']),
+                        subtitle: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              stateChip(context, snapshot.data!['status']),
+                              SizedBox(width: 20),
+                              Expanded(
+                                child: Text(
+                                  snapshot.data!['name'],
+                                  textAlign: TextAlign.right,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style: Theme.of(context).textTheme.headline6,
+                                ),
+                              )
+                            ],
                           ),
-                          isThreeLine: true,
-                        )),
-                  ),
+                        ),
+                        isThreeLine: true,
+                      )),
                 ),
               ),
             ),

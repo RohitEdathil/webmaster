@@ -39,7 +39,8 @@ class _HomeViewState extends State<HomeView> {
     return !events.ready
         ? Center(child: CircularProgressIndicator())
         : RefreshIndicator(
-            onRefresh: () async => setState(() {}),
+            onRefresh: () async => setState(() =>
+                Provider.of<EventModel>(context, listen: false).refresh()),
             child: Scaffold(
               backgroundColor: Theme.of(context).primaryColor,
               floatingActionButton: events.writeAccess
@@ -49,7 +50,7 @@ class _HomeViewState extends State<HomeView> {
                     )
                   : null,
               body: CustomScrollView(
-                physics: BouncingScrollPhysics(),
+                // physics: BouncingScrollPhysics(),
                 slivers: [
                   SliverAppBar(
                     // elevation: 0,
@@ -76,8 +77,10 @@ class _HomeViewState extends State<HomeView> {
                   ),
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
-                        (context, index) => EventCard(index: index),
-                        childCount: events.eventsCount),
+                      (context, index) => EventCard(index: index),
+                      childCount: events.eventsCount,
+                      addRepaintBoundaries: false,
+                    ),
                   ),
                   SliverToBoxAdapter(
                       child: SizedBox(
