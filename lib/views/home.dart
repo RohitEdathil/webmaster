@@ -4,7 +4,7 @@ import 'package:webmaster/components/event_card.dart';
 import 'package:webmaster/components/prompts.dart';
 import 'package:webmaster/components/status_displays.dart';
 import 'package:webmaster/data/events.dart';
-import 'package:webmaster/views/create.dart';
+import 'package:webmaster/views/write.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -15,23 +15,17 @@ class _HomeViewState extends State<HomeView> {
   void gotoCreate(BuildContext context) => Navigator.of(context)
       .push(MaterialPageRoute(builder: (context) => WriteView()));
 
-  void unlockPrompt(BuildContext context) {
-    showDialog(context: context, builder: (context) => UnlockPrompt());
-  }
+  void unlockPrompt(BuildContext context) =>
+      showDialog(context: context, builder: (context) => UnlockPrompt());
 
-  void lockPrompt(BuildContext context) {
-    showDialog(context: context, builder: (context) => LockPrompt());
-  }
+  void lockPrompt(BuildContext context) =>
+      showDialog(context: context, builder: (context) => LockPrompt());
 
-  void serverOnPrompt(BuildContext context) {
-    showDialog(
-        context: context, builder: (context) => ServerToggle(setTo: true));
-  }
+  void serverOnPrompt(BuildContext context) => showDialog(
+      context: context, builder: (context) => ServerToggle(setTo: true));
 
-  void serverOffPrompt(BuildContext context) {
-    showDialog(
-        context: context, builder: (context) => ServerToggle(setTo: false));
-  }
+  void serverOffPrompt(BuildContext context) => showDialog(
+      context: context, builder: (context) => ServerToggle(setTo: false));
 
   @override
   Widget build(BuildContext context) {
@@ -50,16 +44,13 @@ class _HomeViewState extends State<HomeView> {
                     )
                   : null,
               body: CustomScrollView(
-                // physics: BouncingScrollPhysics(),
                 slivers: [
                   SliverAppBar(
-                    // elevation: 0,
                     flexibleSpace: Padding(
                       padding: const EdgeInsets.only(top: 25),
                       child: Image.asset('assets/logo.jpg'),
                     ),
                     expandedHeight: 300,
-
                     actions: [
                       events.writeAccess
                           ? ServerStatus(

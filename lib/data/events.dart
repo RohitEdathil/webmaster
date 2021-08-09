@@ -84,12 +84,23 @@ class EventModel extends ChangeNotifier {
     return eventData;
   }
 
+  Future<Map<String, dynamic>> getEvent(int index) async {
+    int id = eventsCount - index - 1;
+    final response = await db!.collection('events').doc(id.toString()).get();
+    final data = response.data();
+    data!['poster'] =
+        await storage!.ref('posters/${data["poster"]}').getDownloadURL();
+    return data;
+  }
+
   void refresh() {
     events.clear();
     maxthumbIndex = 0;
+    notifyListeners();
   }
 
   Future<String?> createEvent(
+    int? id,
     String name,
     String writeUp,
     String link,
@@ -97,20 +108,33 @@ class EventModel extends ChangeNotifier {
     String date,
     int status,
   ) async {
-    final newName = '$eventsCount-poster${extension(path)}';
-    await storage?.ref("posters/$newName").putFile(File(path));
+    int nextId;
+    String newName;
+    if (id == null) {
+      nextId = eventsCount;
+      newName = '$nextId-poster${extension(path)}';
+      await storage?.ref("posters/$newName").putFile(File(path));
+    } else {
+      nextId = id;
+      if (path.substring(0, 4) == 'http') {
+        newName = '$nextId-poster${extension(storage!.refFromURL(path).name)}';
+      } else {
+        newName = '$nextId-poster${extension(path)}';
+        await storage?.ref("posters/$newName").putFile(File(path));
+      }
+    }
     try {
       await db!.runTransaction((transaction) async {
         // Reads
-        final serverStatus =
-            await transaction.get(db!.collection('state').doc('0'));
-        int nextId = serverStatus['events_count'];
+
         final curThumbnail = await transaction.get(
             db!.collection('thumbnails').doc('${nextId ~/ eventsPerThumb}'));
 
         // Writes
-        transaction.update(
-            db!.collection('state').doc('0'), {'events_count': nextId + 1});
+        if (id == null) {
+          transaction.update(
+              db!.collection('state').doc('0'), {'events_count': nextId + 1});
+        }
         transaction.set(db!.collection('events').doc('$nextId'), {
           'name': name,
           'write_up': writeUp,
@@ -143,6 +167,7 @@ class EventModel extends ChangeNotifier {
     } on FirebaseException catch (e) {
       return e.message;
     }
+    refresh();
   }
 
   Future<bool> login(String email, String password) async {

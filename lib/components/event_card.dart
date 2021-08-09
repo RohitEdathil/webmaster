@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:webmaster/components/prompts.dart';
 import 'package:webmaster/data/events.dart';
+import 'package:webmaster/views/write.dart';
 
 class EventCard extends StatelessWidget {
   final int index;
   const EventCard({required this.index});
+
+  void openEvent(BuildContext context) async {
+    if (Provider.of<EventModel>(context, listen: false).writeAccess) {
+      final current =
+          await Provider.of<EventModel>(context, listen: false).getEvent(index);
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => WriteView(
+                data: current,
+                id: Provider.of<EventModel>(context, listen: false)
+                        .eventsCount -
+                    index -
+                    1,
+              )));
+    } else {
+      showDialog(context: context, builder: (context) => UnlockPrompt());
+    }
+  }
 
   Chip stateChip(BuildContext context, int state) {
     switch (state) {
@@ -47,6 +66,9 @@ class EventCard extends StatelessWidget {
                       color:
                           Theme.of(context).primaryColorDark.withOpacity(0.3),
                       child: ListTile(
+                        onTap: () {
+                          openEvent(context);
+                        },
                         contentPadding: EdgeInsets.all(0),
                         minVerticalPadding: 0,
                         title: Image.network(snapshot.data!['thumb']),

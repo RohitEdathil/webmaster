@@ -1,10 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ImageInput extends StatelessWidget {
   final Function pickImage;
-  final XFile? file;
+  final String? file;
   const ImageInput({required this.pickImage, this.file});
   @override
   Widget build(BuildContext context) {
@@ -24,7 +23,9 @@ class ImageInput extends StatelessWidget {
                       child: Icon(Icons.photo_album_rounded),
                     ),
                   )
-                : Image.file(File(file?.path ?? '')),
+                : (file!.substring(0, 4) == 'http'
+                    ? Image.network(file!)
+                    : Image.file(File(file ?? ''))),
           ),
         ),
       ),

@@ -6,6 +6,9 @@ import 'package:webmaster/components/text_field.dart';
 import 'package:webmaster/data/events.dart';
 
 class WriteView extends StatefulWidget {
+  final Map<String, dynamic>? data;
+  final int? id;
+  WriteView({this.data, this.id});
   @override
   _WriteViewState createState() => _WriteViewState();
 }
@@ -14,16 +17,33 @@ class _WriteViewState extends State<WriteView> {
   final _picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
-  XFile? file;
+  String? file;
   String? writeUp;
   String? name;
   String? link;
   int state = 0;
   DateTime date = DateTime.now();
+  bool editMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.data != null) {
+      editMode = true;
+      writeUp = widget.data!['write_up'];
+      name = widget.data!['name'];
+      link = widget.data!['link'];
+      file = widget.data!['poster'];
+      state = widget.data!['status'];
+      date = DateTime.parse(widget.data!['date']);
+    }
+  }
+
   void pickImage() async {
-    file = await _picker.pickImage(source: ImageSource.gallery);
-    if (file != null) {
-      setState(() {});
+    final _file = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (_file != null) {
+      setState(() => file = _file.path);
     }
   }
 
@@ -99,10 +119,11 @@ class _WriteViewState extends State<WriteView> {
 
     final response = await Provider.of<EventModel>(context, listen: false)
         .createEvent(
+            widget.id,
             name!,
             writeUp!,
             link!,
-            file!.path,
+            file!,
             "${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",
             state);
     if (response != null) {
@@ -129,7 +150,7 @@ class _WriteViewState extends State<WriteView> {
           physics: BouncingScrollPhysics(),
           slivers: [
             SliverAppBar(
-              title: Text('Create Event'),
+              title: Text(editMode ? "Edit Event" : 'Create Event'),
               centerTitle: true,
               elevation: 0,
             ),
