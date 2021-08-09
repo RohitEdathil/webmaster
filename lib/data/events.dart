@@ -99,15 +99,8 @@ class EventModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String?> createEvent(
-    int? id,
-    String name,
-    String writeUp,
-    String link,
-    String path,
-    String date,
-    int status,
-  ) async {
+  Future<String?> createEvent(int? id, String name, String writeUp, String link,
+      String path, String date, int status) async {
     int nextId;
     String newName;
     if (id == null) {
@@ -168,6 +161,10 @@ class EventModel extends ChangeNotifier {
       return e.message;
     }
     refresh();
+  }
+
+  void deleteEvent(int id) {
+    print(id);
   }
 
   Future<bool> login(String email, String password) async {

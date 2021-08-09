@@ -134,3 +134,31 @@ class ServerToggle extends StatelessWidget {
     );
   }
 }
+
+class DeletePrompt extends StatelessWidget {
+  final id;
+  const DeletePrompt({required this.id});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Delete Event'),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      backgroundColor: Theme.of(context).primaryColor,
+      content: Text('Do you really wish to delete this Event?'),
+      actions: [
+        TextButton(
+          child: Text('Cancel'),
+          onPressed: Navigator.of(context).pop,
+        ),
+        TextButton(
+          child: Text('Confirm'),
+          onPressed: () {
+            Provider.of<EventModel>(context, listen: false).deleteEvent(id);
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
+}

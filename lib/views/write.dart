@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:webmaster/components/image_picker.dart';
+import 'package:webmaster/components/prompts.dart';
 import 'package:webmaster/components/text_field.dart';
 import 'package:webmaster/data/events.dart';
 
@@ -37,6 +38,11 @@ class _WriteViewState extends State<WriteView> {
       state = widget.data!['status'];
       date = DateTime.parse(widget.data!['date']);
     }
+  }
+
+  void deleteEvent(BuildContext context) {
+    showDialog(
+        context: context, builder: (context) => DeletePrompt(id: widget.id));
   }
 
   void pickImage() async {
@@ -189,9 +195,19 @@ class _WriteViewState extends State<WriteView> {
                             validator: stateValue,
                             current: state,
                           ),
+                          editMode
+                              ? TextButton.icon(
+                                  onPressed: () => deleteEvent(context),
+                                  icon: Icon(Icons.delete),
+                                  style: ButtonStyle(
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.red)),
+                                  label: Text('Delete Event'))
+                              : Container(),
                           SizedBox(
                             height: 100,
-                          )
+                          ),
                         ],
                       ),
                     ),
