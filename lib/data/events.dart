@@ -163,8 +163,18 @@ class EventModel extends ChangeNotifier {
     refresh();
   }
 
-  void deleteEvent(int id) {
-    print(id);
+  Future<void> deleteEvent(int id) async {
+    final docRef = db!.collection('events').doc(id.toString());
+    final doc = await docRef.get();
+    final data = doc.data();
+    await storage!.ref("posters/${data!['poster']}").delete();
+    await db!.runTransaction((transaction) async {
+      transaction.delete(docRef);
+      final thumbIdx = id ~/ eventsPerThumb;
+      transaction.update(
+          db!.collection('thumbnails').doc(thumbIdx.toString()), {'$id': null});
+    });
+    refresh();
   }
 
   Future<bool> login(String email, String password) async {

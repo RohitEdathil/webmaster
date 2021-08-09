@@ -135,10 +135,16 @@ class ServerToggle extends StatelessWidget {
   }
 }
 
-class DeletePrompt extends StatelessWidget {
+class DeletePrompt extends StatefulWidget {
   final id;
   const DeletePrompt({required this.id});
 
+  @override
+  _DeletePromptState createState() => _DeletePromptState();
+}
+
+class _DeletePromptState extends State<DeletePrompt> {
+  bool loading = false;
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -149,14 +155,20 @@ class DeletePrompt extends StatelessWidget {
       actions: [
         TextButton(
           child: Text('Cancel'),
-          onPressed: Navigator.of(context).pop,
+          onPressed:
+              loading ? null : () => Navigator.of(context).pop<bool>(false),
         ),
         TextButton(
-          child: Text('Confirm'),
-          onPressed: () {
-            Provider.of<EventModel>(context, listen: false).deleteEvent(id);
-            Navigator.of(context).pop();
-          },
+          child: loading ? CircularProgressIndicator() : Text('Confirm'),
+          onPressed: loading
+              ? null
+              : () async {
+                  setState(() => loading = true);
+                  await Provider.of<EventModel>(context, listen: false)
+                      .deleteEvent(widget.id);
+                  setState(() => loading = false);
+                  Navigator.of(context).pop<bool>(true);
+                },
         ),
       ],
     );

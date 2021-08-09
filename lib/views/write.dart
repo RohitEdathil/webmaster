@@ -40,9 +40,12 @@ class _WriteViewState extends State<WriteView> {
     }
   }
 
-  void deleteEvent(BuildContext context) {
-    showDialog(
+  void deleteEvent(BuildContext context) async {
+    bool? result = await showDialog<bool>(
         context: context, builder: (context) => DeletePrompt(id: widget.id));
+    if (result ?? false) {
+      Navigator.of(context).pop();
+    }
   }
 
   void pickImage() async {
