@@ -77,7 +77,7 @@ class _WriteViewState extends State<WriteView> {
   String? actionValidator(String? w) {
     action = w;
     if (w == null || w.isEmpty) {
-      return 'WAction Up can\'t be empty';
+      return 'Action Up can\'t be empty';
     }
   }
 
@@ -148,8 +148,8 @@ class _WriteViewState extends State<WriteView> {
             widget.id,
             name!,
             writeUp!,
-            action!,
             link!,
+            action!,
             file!,
             "${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",
             state,
