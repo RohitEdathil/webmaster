@@ -47,10 +47,6 @@ class EventModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleServerStatus() {
-    db?.collection('state').doc('0').update({'server_status': !serverStatus});
-  }
-
   void logout() {
     if (user != null) {
       writeAccess = false;

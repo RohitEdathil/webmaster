@@ -21,12 +21,6 @@ class _HomeViewState extends State<HomeView> {
   void lockPrompt(BuildContext context) =>
       showDialog(context: context, builder: (context) => LockPrompt());
 
-  void serverOnPrompt(BuildContext context) => showDialog(
-      context: context, builder: (context) => ServerToggle(setTo: true));
-
-  void serverOffPrompt(BuildContext context) => showDialog(
-      context: context, builder: (context) => ServerToggle(setTo: false));
-
   @override
   Widget build(BuildContext context) {
     final events = Provider.of<EventModel>(context);
@@ -52,13 +46,6 @@ class _HomeViewState extends State<HomeView> {
                     ),
                     expandedHeight: 300,
                     actions: [
-                      events.writeAccess
-                          ? ServerStatus(
-                              callback: () => events.serverStatus
-                                  ? serverOffPrompt(context)
-                                  : serverOnPrompt(context),
-                            )
-                          : Container(),
                       WriteAccess(
                         callback: () => events.writeAccess
                             ? lockPrompt(context)
