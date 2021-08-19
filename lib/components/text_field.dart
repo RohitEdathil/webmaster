@@ -30,10 +30,64 @@ class CustomField extends StatelessWidget {
   }
 }
 
-class StateSlider extends StatelessWidget {
+class TypeChooser extends StatelessWidget {
   final Function(int?) validator;
   final int current;
-  StateSlider({required this.validator, required this.current});
+  TypeChooser({required this.validator, required this.current});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(30),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColorDark.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        children: [
+          Text(
+            'Type',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          Divider(),
+          RadioListTile(
+            groupValue: current,
+            onChanged: validator,
+            activeColor: Theme.of(context).accentColor,
+            value: 0,
+            title: Text('Event'),
+          ),
+          RadioListTile(
+            groupValue: current,
+            onChanged: validator,
+            activeColor: Theme.of(context).accentColor,
+            value: 1,
+            title: Text('Webinar'),
+          ),
+          RadioListTile(
+            groupValue: current,
+            onChanged: validator,
+            activeColor: Theme.of(context).accentColor,
+            value: 2,
+            title: Text('Competition'),
+          ),
+          RadioListTile(
+            groupValue: current,
+            onChanged: validator,
+            activeColor: Theme.of(context).accentColor,
+            value: 3,
+            title: Text('Post'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class StateChooser extends StatelessWidget {
+  final Function(int?) validator;
+  final int current;
+  StateChooser({required this.validator, required this.current});
   @override
   Widget build(BuildContext context) {
     return Container(

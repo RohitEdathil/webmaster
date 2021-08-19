@@ -22,7 +22,9 @@ class _WriteViewState extends State<WriteView> {
   String? writeUp;
   String? name;
   String? link;
+  String? action;
   int state = 0;
+  int type = 0;
   DateTime date = DateTime.now();
   bool editMode = false;
 
@@ -33,9 +35,11 @@ class _WriteViewState extends State<WriteView> {
       editMode = true;
       writeUp = widget.data!['write_up'];
       name = widget.data!['name'];
+      action = widget.data!['action'];
       link = widget.data!['link'];
       file = widget.data!['poster'];
       state = widget.data!['status'];
+      type = widget.data!['type'];
       date = DateTime.parse(widget.data!['date']);
     }
   }
@@ -70,9 +74,22 @@ class _WriteViewState extends State<WriteView> {
     }
   }
 
+  String? actionValidator(String? w) {
+    action = w;
+    if (w == null || w.isEmpty) {
+      return 'WAction Up can\'t be empty';
+    }
+  }
+
   void stateValue(int? s) {
     setState(() {
       state = s!;
+    });
+  }
+
+  void typeValue(int? s) {
+    setState(() {
+      type = s!;
     });
   }
 
@@ -131,10 +148,12 @@ class _WriteViewState extends State<WriteView> {
             widget.id,
             name!,
             writeUp!,
+            action!,
             link!,
             file!,
             "${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",
-            state);
+            state,
+            type);
     if (response != null) {
       snackBar(response);
       toggleLoading();
@@ -186,7 +205,12 @@ class _WriteViewState extends State<WriteView> {
                             current: writeUp,
                           ),
                           CustomField(
-                            label: 'Registration Link',
+                            label: 'Action',
+                            validator: actionValidator,
+                            current: action,
+                          ),
+                          CustomField(
+                            label: 'Link',
                             validator: linkValidator,
                             current: link,
                           ),
@@ -194,9 +218,13 @@ class _WriteViewState extends State<WriteView> {
                             validator: dateValue,
                             current: date,
                           ),
-                          StateSlider(
+                          StateChooser(
                             validator: stateValue,
                             current: state,
+                          ),
+                          TypeChooser(
+                            validator: typeValue,
+                            current: type,
                           ),
                           editMode
                               ? TextButton.icon(

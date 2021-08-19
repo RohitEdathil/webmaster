@@ -100,7 +100,7 @@ class EventModel extends ChangeNotifier {
   }
 
   Future<String?> createEvent(int? id, String name, String writeUp, String link,
-      String path, String date, int status) async {
+      String action, String path, String date, int status, int type) async {
     int nextId;
     String newName;
     if (id == null) {
@@ -130,11 +130,13 @@ class EventModel extends ChangeNotifier {
         }
         transaction.set(db!.collection('events').doc('$nextId'), {
           'name': name,
+          'action': action,
           'write_up': writeUp,
           'link': link,
           'poster': newName,
           'date': date,
-          'status': status
+          'status': status,
+          'type': type,
         });
 
         curThumbnail.exists
